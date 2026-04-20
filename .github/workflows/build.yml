@@ -1,36 +1,30 @@
-name: CI
-on:
-  workflow_dispatch:
-
+name: Build ROM
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y build-essential libpng-dev git wget python3
-          git clone --depth=1 https://github.com/pret/agbcc
-          cd agbcc && ./build.sh && ./install.sh ../ && cd ..
+          sudo apt-get update
+          sudo apt-get install -y build-essential libpng-dev libelf-dev zlib1g-dev
+
+      - name: Install agbcc
+        run: |
+          git clone https://github.com/pret/agbcc
+          cd agbcc
+          ./build.sh
+          ./install.sh ../
+          cd ..
 
       - name: Build ROM
-        run: |
-          # Go directly to the project folder
-          cd HnS-GBA-Clean
-          
-          # Build the tools
-          make -C tools -j$(nproc)
-          
-          # Create dummy baserom and build the game
-          touch baserom.gba
-          make -j$(nproc)
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
+        run: make -j$(nproc) WERROR=0
+      
+      - name: Upload ROM
+        uses: actions/upload-artifact@v3
         with:
-          name: HnS-Final-ROM
-          path: "HnS-GBA-Clean/*.gba"
+          name: pokedust-rom
+          path: "*.gba"
