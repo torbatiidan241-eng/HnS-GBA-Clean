@@ -20,9 +20,11 @@ jobs:
           ./install.sh ../
           cd ..
 
+      - name: Fix all line endings
+        run: find . -type f -name "*" -print0 | xargs -0 dos2unix
+
       - name: Build ROM
         run: |
-          find . -type f -name "*.pal" -exec dos2unix {} +
           make clean
           make -j$(nproc) WERROR=0 WARNINGS=0
 
