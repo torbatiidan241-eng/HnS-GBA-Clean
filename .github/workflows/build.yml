@@ -24,7 +24,7 @@ jobs:
         run: make -j$(nproc) WERROR=0
       
       - name: Upload ROM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pokedust-rom
           path: "*.gba"
