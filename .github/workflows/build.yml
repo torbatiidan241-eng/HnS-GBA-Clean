@@ -10,7 +10,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libpng-dev libelf-dev zlib1g-dev binutils-arm-none-eabi gcc-arm-none-eabi
+          sudo apt-get install -y build-essential libpng-dev libelf-dev zlib1g-dev binutils-arm-none-eabi dos2unix
 
       - name: Install agbcc
         run: |
@@ -21,7 +21,11 @@ jobs:
           cd ..
 
       - name: Build ROM
-        run: make clean && make -j$(nproc) WERROR=0 WARNINGS=0
+        run: |
+          find . -type f -name "*.pal" -exec dos2unix {} +
+          make clean
+          make -j$(nproc) WERROR=0 WARNINGS=0
+
       - name: Upload ROM
         uses: actions/upload-artifact@v4
         with:
