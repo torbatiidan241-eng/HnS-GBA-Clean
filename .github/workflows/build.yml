@@ -21,8 +21,7 @@ jobs:
           cd ..
 
       - name: Build ROM
-     run: make clean && make -j$(nproc) WERROR=0 WARNINGS=0
-      
+        run: make clean && make -j$(nproc) WERROR=0 WARNINGS=0
       - name: Upload ROM
         uses: actions/upload-artifact@v4
         with:
