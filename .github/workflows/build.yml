@@ -19,10 +19,18 @@ jobs:
 
       - name: Build ROM
         run: |
-          # This line moves the computer into the correct folder
-          cd HnS-GBA-Clean
+          # 1. Search for where the Makefile is and move there
+          SUBFOLDER=$(find . -maxdepth 2 -name "Makefile" -exec dirname {} \;)
+          cd $SUBFOLDER
+          echo "Moving to project directory: $SUBFOLDER"
           
-          # Now it will find the Makefile and the tools!
+          # 2. Start the build
           touch baserom.gba
           make -C tools -j$(nproc)
           make -j$(nproc)
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: HnS-Final-ROM
+          path: "**/*.gba"
